@@ -106,3 +106,27 @@ def budget_view(request):
         'selected_category': selected_category,
         'analytics_breakdown': analytics_breakdown,
     })
+import csv
+from django.http import HttpResponse
+
+@login_required
+def export_expenses_csv(request):
+    # 📜 Fetch all transaction log entries belonging to this user
+    user_expenses = Expense.objects.filter(user=request.user).order_by('-date')
+
+    # 📁 Configure the browser response header stream for a CSV file attachment
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="spendwise_expenses.csv"'
+
+    # ✒️ Initialize the spreadsheet line writer
+    writer = csv.writer(response)
+    
+    # Write the spreadsheet structural header column labels
+    writer.writerow(['Execution Date', 'Classification Category', 'Description Details', 'Amount Subtotal'])
+
+    # Write each individual transaction ledger item row line
+    for expense in user_expenses:
+        writer.writerow([expense.date, expense.category, expense.description, expense.amount])
+
+    return response
+
