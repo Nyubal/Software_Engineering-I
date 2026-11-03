@@ -1,0 +1,17 @@
+<h2>SpendWise Monthly Budget Configuration</h2>
+<p>Welcome, {{ request.user.username }}!</p>
+
+<div>
+    <h3>Your Current Preset Budget:</h3>
+    <p style="font-size: 24px; font-weight: bold;">${{ budget.total_budget }}</p>
+</div>
+
+<h3>Update Your Monthly Budget</h3>
+<form method="POST">
+    {% csrf_token %}
+    <label for="total_budget">New Budget Amount ($):</label>
+    <input type="number" step="0.01" id="total_budget" name="total_budget" value="{{ budget.total_budget }}" required>
+    <button type="submit">Save Budget</button>
+</form>
+
+<p><a href="{% url 'login' %}">Logout</a></p>
